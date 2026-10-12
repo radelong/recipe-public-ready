@@ -1,0 +1,7 @@
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+export const members = sqliteTable("members", { id: text("id").primaryKey(), email: text("email").notNull().unique(), name: text("name").notNull(), authId: text("auth_id").unique(), role: text("role").notNull().default("user"), active: integer("active").notNull().default(1), username:text("username").unique(), passwordHash:text("password_hash"), passwordSalt:text("password_salt") });
+export const sessions=sqliteTable("sessions",{tokenHash:text("token_hash").primaryKey(),memberId:text("member_id").notNull().references(()=>members.id,{onDelete:'cascade'}),expires:integer("expires").notNull()});
+export const loginAttempts=sqliteTable("login_attempts",{key:text("key").primaryKey(),count:integer("count").notNull(),expires:integer("expires").notNull()});
+export const recipes = sqliteTable("recipes", { id: text("id").primaryKey(), ownerId: text("owner_id").notNull().references(()=>members.id), data: text("data").notNull(), updatedAt: text("updated_at").notNull() });
+export const grants = sqliteTable("grants", { id: text("id").primaryKey(), recipeId: text("recipe_id").notNull().references(()=>recipes.id, {onDelete:"cascade"}), memberId: text("member_id").notNull().references(()=>members.id, {onDelete:"cascade"}) });
+export const settings = sqliteTable("settings", { id: text("id").primaryKey(), data: text("data").notNull() });

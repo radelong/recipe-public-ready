@@ -1,0 +1,4 @@
+import {env} from "cloudflare:workers";
+import {member,recipeRow,HttpError,responseError} from "../../../lib/server";
+export const dynamic="force-dynamic";
+export async function GET(req:Request){try{const m=await member();const key=new URL(req.url).searchParams.get("key")||"";const row=await recipeRow(key.split("/")[0],m);const data=JSON.parse(row.data);if(key!==data.image&&!(data.attachments||[]).some((x:any)=>x.key===key))throw new HttpError(404,"File not found.");const obj=await env.BUCKET?.get(key);if(!obj)throw new HttpError(404,"File not found.");const headers=new Headers({"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"});headers.set("Content-Type",obj.httpMetadata?.contentType||"application/octet-stream");if(key!==data.image)headers.set("Content-Disposition",`attachment; filename*=UTF-8''${encodeURIComponent(obj.customMetadata?.name||"recipe-file")}`);return new Response(obj.body,{headers});}catch(e){return responseError(e);}}

@@ -1,0 +1,9 @@
+{
+  "project_id": "appgprj_EXAMPLE_NOT_A_DEPLOYMENT",
+  "d1": "DB",
+  "r2": "BUCKET",
+  "connectors": [],
+  "allowed_users": [
+    "user@example.invalid"
+  ]
+}
